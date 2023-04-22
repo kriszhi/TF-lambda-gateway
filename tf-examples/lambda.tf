@@ -26,6 +26,20 @@ resource "aws_lambda_function" "serverpy" {
 }
 
 */
+// Actual Lambda Waiter Handler
+resource "aws_security_group" "lambda-waiter-sg" {
+  name        = "LAMBDA-WAITER-${var.cluster_name}"
+  description = "Allow egress from Lambda waiter to Landing Page instances for status check"
+  vpc_id      = data.aws_vpc.vpc.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_lambda_function" "lambda-waiter" {
   depends_on       = [data.archive_file.lambda_waiter_handler]
   
